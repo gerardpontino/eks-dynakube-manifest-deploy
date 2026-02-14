@@ -50,3 +50,4 @@ jobs:
       # 6️⃣ Apply Dynatrace manifest
       - name: Apply Dynatrace Manifest
         run: kubectl apply -f dynakube.yaml
+#
