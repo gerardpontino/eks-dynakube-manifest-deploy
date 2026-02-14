@@ -28,7 +28,7 @@ jobs:
       # 3️⃣ Update kubeconfig for EKS
       - name: Point to Cluster
         run: |
-          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ap-southeast-1
+          aws eks update-kubeconfig --name gerard-dev-cluster --region ap-southeast-1
 
       # 4️⃣ Verify cluster access
       - name: Verify cluster access
