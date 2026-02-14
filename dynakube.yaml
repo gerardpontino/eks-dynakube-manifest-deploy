@@ -8,17 +8,7 @@ metadata:
 # Link to api reference for further information: https://docs.dynatrace.com/docs/ingest-from/setup-on-k8s/reference/dynakube-parameters
 spec:
   apiUrl: https://zcn50477.live.dynatrace.com/api
-  tokens: 
-    apiToken:
-      valueFrom:
-        secretKeyRef:
-          name: dynatrace-tokens
-          key: apiToken
-    dataIngestToken:
-      valueFrom:
-        secretKeyRef:
-          name: dynatrace-tokens
-          key: dataIngestToken
+  tokens: dynatrace-tokens
   metadataEnrichment:
     enabled: true
   oneAgent:
