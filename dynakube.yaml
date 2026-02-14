@@ -1,15 +1,3 @@
-apiVersion: v1
-data:
-  apiToken: ${{ secrets.NONPROD_DT_API_TOKEN }}
-  dataIngestToken: ${{ secrets.NONPROD_DT_DATA_INGEST_TOKEN }}
-kind: Secret
-metadata:
-  name: eks-k8s-2026-02-12-1770909435
-  namespace: dynatrace
-  labels:
-    dynatrace.com/created-by: "dynatrace.kubernetes"
-type: Opaque
----
 apiVersion: dynatrace.com/v1beta5
 kind: DynaKube
 metadata:
@@ -20,6 +8,7 @@ metadata:
 # Link to api reference for further information: https://docs.dynatrace.com/docs/ingest-from/setup-on-k8s/reference/dynakube-parameters
 spec:
   apiUrl: https://zcn50477.live.dynatrace.com/api
+  tokens: dynatrace-tokens
   metadataEnrichment:
     enabled: true
   oneAgent:
