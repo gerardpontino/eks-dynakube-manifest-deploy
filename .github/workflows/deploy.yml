@@ -1,29 +1,39 @@
-name: Deploy DynaKube
+name: Deploy DynaKube (Dev Test)
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ develop ]
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  deploy-to-eks:
+  deploy:
+    environment: development
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Authenticate to AWS (OIDC)
+      - name: AWS Authenticate (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubEKSDeployRole
-          aws-region: ap-southeast-1 
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubEKSDeployRole02
+          aws-region: us-east-1
 
-      - name: Setup Kubeconfig
-        run: aws eks update-kubeconfig --name my-demo-cluster
-
-      - name: Deploy DynaKube
+      - name: Point to Cluster
         run: |
-          kubectl apply -f dynakube.yaml
+          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }}
+      
+      - name: Create Dynatrace Secret in EKS
+        run: |
+          kubectl create secret generic dynatrace-tokens \
+            -n dynatrace \
+            --from-literal="apiToken=${{ secrets.DT_API_TOKEN }}" \
+            --from-literal="dataIngestToken=${{ secrets.DT_DATA_INGEST_TOKEN }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Apply Manifest
+        run: kubectl apply -f dynakube.yaml
