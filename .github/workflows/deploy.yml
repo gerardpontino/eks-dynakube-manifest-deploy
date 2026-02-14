@@ -1,4 +1,4 @@
-name: Deploy DynaKube (Dev Test)
+name: Deploy Dynatrace (Dev)
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
       - name: AWS Authenticate (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubEKSDeployRole02
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubEKSCluster
           aws-region: us-east-1
 
       - name: Point to Cluster
@@ -35,5 +35,5 @@ jobs:
             --from-literal="dataIngestToken=${{ secrets.DT_DATA_INGEST_TOKEN }}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Apply Manifest
+      - name: Apply Dynatrace Manifest
         run: kubectl apply -f dynakube.yaml
