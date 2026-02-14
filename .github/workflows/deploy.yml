@@ -26,7 +26,25 @@ jobs:
       - name: Point to Cluster
         run: |
           aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ap-southeast-1
-      
+
+      - name: Ensure aws-auth ConfigMap exists and add GitHub role
+        run: |
+          # Check if aws-auth exists
+          if ! kubectl get configmap aws-auth -n kube-system; then
+            echo "aws-auth not found, creating..."
+            kubectl create configmap aws-auth -n kube-system
+          fi
+
+          # Patch/add GitHub role for persistent access
+          kubectl get configmap aws-auth -n kube-system -o yaml | \
+          yq eval '.data.mapRoles += "\n- rolearn: arn:aws:iam::'"${{ secrets.AWS_ACCOUNT_ID }}"':role/GitHubEKSCluster\n  username: github-actions\n  groups:\n    - system:masters"' - | \
+          kubectl apply -f -
+
+      - name: Verify cluster access
+        run: |
+          kubectl get nodes
+          kubectl get ns
+
       - name: Create Dynatrace Secret in EKS
         run: |
           kubectl create secret generic dynatrace-tokens \
