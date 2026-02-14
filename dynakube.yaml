@@ -1,3 +1,15 @@
+apiVersion: v1
+data:
+  apiToken: ZHQwYzAxLjY0Uk5SNDNHNlRER0g0NTRDQVJUMk9IQi5CWUVKRjJLSEVRQ0pHQVpaRFNTQkVGU0JOU1dDM1RORE42NkxKUlhaQkpSWkVXRURSSVZTRkRPVlozV0M1Q0lT
+  dataIngestToken: ZHQwYzAxLkxEVU9MWlFMWjVNVzRJU1ZaQzVaTEdXTy5ONUVGSkdCTk02RldIVzQ3SDNIWkhPWUdDNlVMTUZKRVdTM1k1RE1ZQ1hNT0lNQVdZTVJDVlBPNkFWU09BUUZM
+kind: Secret
+metadata:
+  name: eks-k8s-2026-02-12-1770909435
+  namespace: dynatrace
+  labels:
+    dynatrace.com/created-by: "dynatrace.kubernetes"
+type: Opaque
+---
 apiVersion: dynatrace.com/v1beta5
 kind: DynaKube
 metadata:
@@ -8,7 +20,6 @@ metadata:
 # Link to api reference for further information: https://docs.dynatrace.com/docs/ingest-from/setup-on-k8s/reference/dynakube-parameters
 spec:
   apiUrl: https://zcn50477.live.dynatrace.com/api
-  tokens: dynatrace-tokens
   metadataEnrichment:
     enabled: true
   oneAgent:
