@@ -3,9 +3,6 @@ name: "Deploy easyTrade App"
 on:
   push:
     branches: [ develop ]
-    paths:
-      - 'kubernetes/sample-app/easytrade/kubernetes-manifests/release/**'
-  workflow_dispatch: 
 
 jobs:
   deploy-app:
