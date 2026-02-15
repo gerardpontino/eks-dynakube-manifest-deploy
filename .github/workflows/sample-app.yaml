@@ -4,7 +4,7 @@ on:
   push:
     branches: [ develop ]
     paths:
-      - 'kubernetes-manifests/release/**'
+      - 'kubernetes/sample-app/easytrade/kubernetes-manifests/release/**'
   workflow_dispatch: 
 
 jobs:
