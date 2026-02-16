@@ -1,7 +1,7 @@
-name: Deploy Dynatrace (Dev)
+name: Dynatrace PR Validation
 
 on:
-  push:
+  pull_request:
     branches:
       - develop
       - main
@@ -11,9 +11,8 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Deploy Dynatrace to EKS
-    environment: development
+  plan:
+    name: Validate Dynatrace Deployment (PR)
     runs-on: ubuntu-latest
 
     env:
@@ -34,27 +33,12 @@ jobs:
       - name: Configure kubectl
         run: aws eks update-kubeconfig --name $EKS_CLUSTER --region $AWS_REGION
 
-      - name: Install / Upgrade Dynatrace Operator
+      - name: Helm Dry-Run Dynatrace Operator
         run: |
           helm upgrade --install dynatrace-operator \
             oci://public.ecr.aws/dynatrace/dynatrace-operator \
             --namespace $DYNATRACE_NAMESPACE \
             --create-namespace \
             --atomic \
-            --wait
-
-      - name: Create / Update Dynatrace Secret
-        run: |
-          kubectl create secret generic dynatrace-tokens \
-            -n $DYNATRACE_NAMESPACE \
-            --from-literal="apiToken=${{ secrets.DT_API_TOKEN }}" \
-            --from-literal="dataIngestToken=${{ secrets.DT_DATA_INGEST_TOKEN }}" \
-            --dry-run=client -o yaml | kubectl apply -f -
-
-      - name: Apply Dynakube Manifest
-        run: kubectl apply -f kubernetes/dynatrace/dynakube.yaml
-
-      - name: Verify Dynatrace rollout
-        run: |
-          kubectl get pods -n $DYNATRACE_NAMESPACE
-          kubectl get dynakube -n $DYNATRACE_NAMESPACE
+            --wait \
+            --dry-run
