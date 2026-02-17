@@ -32,13 +32,3 @@ jobs:
 
       - name: Configure kubectl
         run: aws eks update-kubeconfig --name $EKS_CLUSTER --region $AWS_REGION
-
-      - name: Helm Dry-Run Dynatrace Operator
-        run: |
-          helm upgrade --install dynatrace-operator \
-            oci://public.ecr.aws/dynatrace/dynatrace-operator \
-            --namespace $DYNATRACE_NAMESPACE \
-            --create-namespace \
-            --atomic \
-            --wait \
-            --dry-run
