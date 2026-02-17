@@ -35,8 +35,8 @@ jobs:
         run: |
           aws eks update-kubeconfig --name gerard-dev-cluster --region ap-southeast-1
       
-            - name: Verify kubectl connectivity
-              run: kubectl get nodes
+      - name: Verify kubectl connectivity
+        run: kubectl get nodes
 
       - name: Install / Upgrade Dynatrace Operator
         run: |
