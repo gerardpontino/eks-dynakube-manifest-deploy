@@ -31,8 +31,21 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubEKSCluster
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Export AWS credentials
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "AWS_SESSION_TOKEN=${{ env.AWS_SESSION_TOKEN }}" >> $GITHUB_ENV
+
       - name: Configure kubectl
         run: aws eks update-kubeconfig --name $EKS_CLUSTER --region $AWS_REGION
+
+      - name: Verify kubectl connectivity
+        run: kubectl get nodes
+
+      - name: Authenticate with Public ECR
+        run: |
+          aws ecr-public get-login-password --region us-east-1 | helm registry login --username AWS --password-stdin public.ecr.aws
 
       - name: Install / Upgrade Dynatrace Operator
         run: |
@@ -42,9 +55,6 @@ jobs:
             --create-namespace \
             --atomic \
             --wait
-      - name: Authenticate with Public ECR
-        run: |
-          aws ecr-public get-login-password --region us-east-1 | helm registry login --username AWS --password-stdin public.ecr.aws
 
       - name: Create / Update Dynatrace Secret
         run: |
