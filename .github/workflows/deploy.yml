@@ -42,6 +42,9 @@ jobs:
             --create-namespace \
             --atomic \
             --wait
+      - name: Authenticate with Public ECR
+        run: |
+          aws ecr-public get-login-password --region us-east-1 | helm registry login --username AWS --password-stdin public.ecr.aws
 
       - name: Create / Update Dynatrace Secret
         run: |
