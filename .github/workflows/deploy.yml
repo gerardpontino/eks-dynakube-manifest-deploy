@@ -25,31 +25,44 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 1️⃣ Authenticate to AWS using OIDC
       - name: AWS Authenticate (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::541495491938:role/GitHubEKSCluster
-          aws-region: ap-southeast-1
+          aws-region: ${{ env.AWS_REGION }}
 
+      # 2️⃣ Export temporary credentials for kubectl / Helm
+      - name: Export AWS credentials
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "AWS_SESSION_TOKEN=${{ env.AWS_SESSION_TOKEN }}" >> $GITHUB_ENV
+
+      # 3️⃣ Configure kubeconfig
       - name: Configure kubectl
-        run: aws eks update-kubeconfig --name gerard-dev-cluster --region ap-southeast-1
+        run: aws eks update-kubeconfig --name $EKS_CLUSTER --region $AWS_REGION
 
+      # 4️⃣ Verify cluster connectivity
       - name: Verify kubectl connectivity
         run: kubectl get nodes
 
+      # 5️⃣ Authenticate Helm to public ECR (us-east-1)
       - name: Authenticate with Public ECR
         run: |
           aws ecr-public get-login-password --region us-east-1 | helm registry login --username AWS --password-stdin public.ecr.aws
 
+      # 6️⃣ Install / Upgrade Dynatrace Operator
       - name: Install / Upgrade Dynatrace Operator
         run: |
           helm upgrade --install dynatrace-operator \
             oci://public.ecr.aws/dynatrace/dynatrace-operator \
-            --namespace dynatrace \
+            --namespace $DYNATRACE_NAMESPACE \
             --create-namespace \
             --atomic \
             --wait
 
+      # 7️⃣ Create / Update Dynatrace Secret
       - name: Create / Update Dynatrace Secret
         run: |
           kubectl create secret generic dynatrace-tokens \
@@ -58,9 +71,11 @@ jobs:
             --from-literal="dataIngestToken=${{ secrets.DT_DATA_INGEST_TOKEN }}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
+      # 8️⃣ Apply Dynakube manifest
       - name: Apply Dynakube Manifest
         run: kubectl apply -f kubernetes/dynatrace/dynakube.yaml
 
+      # 9️⃣ Verify Dynakube rollout
       - name: Verify Dynatrace rollout
         run: |
           kubectl get pods -n $DYNATRACE_NAMESPACE
