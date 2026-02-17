@@ -2,9 +2,7 @@ name: Deploy Dynatrace (Dev)
 
 on:
   push:
-    branches:
-      - develop
-      - main
+    branches: [ develop ]
 
 permissions:
   id-token: write
@@ -12,53 +10,52 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy Dynatrace to EKS
     environment: development
     runs-on: ubuntu-latest
 
-    env:
-      AWS_REGION: ap-southeast-1
-      EKS_CLUSTER: gerard-dev-cluster
-      DYNATRACE_NAMESPACE: dynatrace
-
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 2️⃣ Authenticate to AWS via OIDC
       - name: AWS Authenticate (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::541495491938:role/GitHubEKSCluster
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubEKSCluster
           aws-region: ap-southeast-1
 
-      - name: Configure kubectl
+      # 3️⃣ Update kubeconfig for EKS
+      - name: Point to Cluster
         run: |
           aws eks update-kubeconfig --name gerard-dev-cluster --region ap-southeast-1
-      
-      - name: Verify kubectl connectivity
-        run: kubectl get nodes
 
-      - name: Install / Upgrade Dynatrace Operator
+      # 4️⃣ Verify cluster access
+      - name: Verify cluster access
         run: |
-          helm upgrade --install dynatrace-operator \
-            oci://public.ecr.aws/dynatrace/dynatrace-operator \
-            --namespace $DYNATRACE_NAMESPACE \
-            --create-namespace \
-            --atomic \
-            --wait
+          echo "Checking nodes..."
+          kubectl get nodes
+          echo "Checking namespaces..."
+          kubectl get ns
+          
+      - name: Validate Dynatrace token variables
+        run: |
+          echo "API Token length: ${#DT_API_TOKEN}"
+          echo "Data Ingest Token length: ${#DT_DATA_INGEST_TOKEN}"
+        env:
+          DT_API_TOKEN: ${{ secrets.DT_API_TOKEN }}
+          DT_DATA_INGEST_TOKEN: ${{ secrets.DT_DATA_INGEST_TOKEN }}
 
-      - name: Create / Update Dynatrace Secret
+
+      # 5️⃣ Create Dynatrace secret
+      - name: Create Dynatrace Secret in EKS
         run: |
           kubectl create secret generic dynatrace-tokens \
-            -n $DYNATRACE_NAMESPACE \
+            -n dynatrace \
             --from-literal="apiToken=${{ secrets.DT_API_TOKEN }}" \
             --from-literal="dataIngestToken=${{ secrets.DT_DATA_INGEST_TOKEN }}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Apply Dynakube Manifest
+      # 6️⃣ Apply Dynatrace manifest
+      - name: Apply Dynatrace Manifest
         run: kubectl apply -f kubernetes/dynatrace/dynakube.yaml
-
-      - name: Verify Dynatrace rollout
-        run: |
-          kubectl get pods -n $DYNATRACE_NAMESPACE
-          kubectl get dynakube -n $DYNATRACE_NAMESPACE
