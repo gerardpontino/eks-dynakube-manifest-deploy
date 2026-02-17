@@ -18,7 +18,7 @@ jobs:
 
     env:
       AWS_REGION: ap-southeast-1
-      EKS_CLUSTER: gerard-dev-cluster
+      EKS_CLUSTER: gerard-uat2-cluster
       DYNATRACE_NAMESPACE: dynatrace
 
     steps:
