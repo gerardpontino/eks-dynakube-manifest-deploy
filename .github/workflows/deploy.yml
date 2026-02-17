@@ -28,19 +28,15 @@ jobs:
       - name: AWS Authenticate (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::541495491938:role/eksclusterrole
+          role-to-assume: arn:aws:iam::541495491938:role/GitHubEKSCluster
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Configure kubectl
         run: |
-          aws eks update-kubeconfig \
-            --name $EKS_CLUSTER \
-            --region $AWS_REGION \
-            --role-arn arn:aws:iam::541495491938:role/eksclusterrole
-          export KUBECONFIG=$HOME/.kube/config
-
-      - name: Verify kubectl connectivity
-        run: kubectl get nodes
+          aws eks update-kubeconfig --name $EKS_CLUSTER --region $AWS_REGION
+      
+            - name: Verify kubectl connectivity
+              run: kubectl get nodes
 
       - name: Install / Upgrade Dynatrace Operator
         run: |
