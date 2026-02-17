@@ -28,7 +28,7 @@ jobs:
       - name: AWS Authenticate (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::541495491938:role/GitHubEKSCluster
+          role-to-assume: arn:aws:iam::541495491938:role/eksclusterrole
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Configure kubectl
@@ -36,7 +36,7 @@ jobs:
           aws eks update-kubeconfig \
             --name $EKS_CLUSTER \
             --region $AWS_REGION \
-            --role-arn arn:aws:iam::541495491938:role/GitHubEKSCluster
+            --role-arn arn:aws:iam::541495491938:role/eksclusterrole
           export KUBECONFIG=$HOME/.kube/config
 
       - name: Verify kubectl connectivity
