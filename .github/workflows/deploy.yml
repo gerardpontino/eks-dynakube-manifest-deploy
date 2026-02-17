@@ -43,10 +43,6 @@ jobs:
       - name: Configure kubectl
         run: aws eks update-kubeconfig --name $EKS_CLUSTER --region $AWS_REGION
 
-      # 4️⃣ Verify cluster connectivity
-      - name: Verify kubectl connectivity
-        run: kubectl get nodes
-
       # 5️⃣ Authenticate Helm to public ECR (us-east-1)
       - name: Authenticate with Public ECR
         run: |
