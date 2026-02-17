@@ -29,17 +29,27 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::541495491938:role/GitHubEKSCluster
-          aws-region: ap-southeast-1
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Configure kubectl
-        run: aws eks update-kubeconfig --name gerard-dev-cluster --region ap-southeast-1
+        run: |
+          aws eks update-kubeconfig \
+            --name $EKS_CLUSTER \
+            --region $AWS_REGION \
+            --role-arn arn:aws:iam::541495491938:role/GitHubEKSCluster
+          export KUBECONFIG=$HOME/.kube/config
+
+      - name: Verify kubectl connectivity
+        run: kubectl get nodes
 
       - name: Install / Upgrade Dynatrace Operator
         run: |
-          helm install dynatrace-operator oci://public.ecr.aws/dynatrace/dynatrace-operator \
-          --create-namespace \
-          --namespace dynatrace \
-          --atomic
+          helm upgrade --install dynatrace-operator \
+            oci://public.ecr.aws/dynatrace/dynatrace-operator \
+            --namespace $DYNATRACE_NAMESPACE \
+            --create-namespace \
+            --atomic \
+            --wait
 
       - name: Create / Update Dynatrace Secret
         run: |
