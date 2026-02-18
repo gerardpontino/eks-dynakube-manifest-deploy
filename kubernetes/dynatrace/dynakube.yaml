@@ -4,7 +4,7 @@ data:
   dataIngestToken: ZHQwYzAxLkxEVU9MWlFMWjVNVzRJU1ZaQzVaTEdXTy5ONUVGSkdCTk02RldIVzQ3SDNIWkhPWUdDNlVMTUZKRVdTM1k1RE1ZQ1hNT0lNQVdZTVJDVlBPNkFWU09BUUZM
 kind: Secret
 metadata:
-  name: nonprod
+  name: demo-dev-cluster
   namespace: dynatrace
   labels:
     dynatrace.com/created-by: "dynatrace.kubernetes"
@@ -13,7 +13,7 @@ type: Opaque
 apiVersion: dynatrace.com/v1beta5
 kind: DynaKube
 metadata:
-  name: nonprod
+  name: demo-dev-cluster
   namespace: dynatrace
   labels:
     dynatrace.com/created-by: "dynatrace.kubernetes"
