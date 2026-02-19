@@ -1,10 +1,10 @@
 apiVersion: v1
 data:
-  apiToken: ZHQwYzAxLjY0Uk5SNDNHNlRER0g0NTRDQVJUMk9IQi5CWUVKRjJLSEVRQ0pHQVpaRFNTQkVGU0JOU1dDM1RORE42NkxKUlhaQkpSWkVXRURSSVZTRkRPVlozV0M1Q0lT
-  dataIngestToken: ZHQwYzAxLkxEVU9MWlFMWjVNVzRJU1ZaQzVaTEdXTy5ONUVGSkdCTk02RldIVzQ3SDNIWkhPWUdDNlVMTUZKRVdTM1k1RE1ZQ1hNT0lNQVdZTVJDVlBPNkFWU09BUUZM
+  apiToken: ZHQwYzAxLkVVUFBHTElCRUlOV0RBTTZUNUgyQkhCSS5MWEFQWERGV09TSzNIUFJFNVpKN0pPUTdZUTU0SkJNU0pSUFpOUjJQM1hDMkhSNlhFWFBPNFRYQ0Y2RkNLSFdI
+  dataIngestToken: ZHQwYzAxLldORFNFRk5BVENNVjYzVVZLVTdaN0FJSS5NR0tCNVVaSlZDNExHTDZCNkpaU1NRR0dQT1lSV1RTWktFN0pNTlBLUlhDRUhHV1NXNEpTWDRZM1laR0pNM1NS
 kind: Secret
 metadata:
-  name: demo-dev-cluster-01
+  name: demo-sit-cluster
   namespace: dynatrace
   labels:
     dynatrace.com/created-by: "dynatrace.kubernetes"
@@ -13,7 +13,7 @@ type: Opaque
 apiVersion: dynatrace.com/v1beta5
 kind: DynaKube
 metadata:
-  name: demo-dev-cluster-01
+  name: demo-sit-cluster
   namespace: dynatrace
   labels:
     dynatrace.com/created-by: "dynatrace.kubernetes"
@@ -44,7 +44,7 @@ spec:
     logMonitoring:
       imageRef:
         repository: public.ecr.aws/dynatrace/dynatrace-logmodule
-        tag: 1.329.73.20260123-140641
+        tag: 1.331.39.20260206-150338
   logMonitoring: {}
   telemetryIngest:
     protocols:
