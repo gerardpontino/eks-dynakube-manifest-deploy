@@ -1,10 +1,10 @@
 apiVersion: v1
 data:
-  apiToken: ZHQwYzAxLkVVUFBHTElCRUlOV0RBTTZUNUgyQkhCSS5MWEFQWERGV09TSzNIUFJFNVpKN0pPUTdZUTU0SkJNU0pSUFpOUjJQM1hDMkhSNlhFWFBPNFRYQ0Y2RkNLSFdI
-  dataIngestToken: ZHQwYzAxLldORFNFRk5BVENNVjYzVVZLVTdaN0FJSS5NR0tCNVVaSlZDNExHTDZCNkpaU1NRR0dQT1lSV1RTWktFN0pNTlBLUlhDRUhHV1NXNEpTWDRZM1laR0pNM1NS
+  apiToken: ZHQwYzAxLjdNSUpTR0k0RFlRWVBDRTM0U1I0WkFRMi5GN0dNNlJWUVhWUVRCSEJNQ0VYVUUyU0wzUVZWR1k1V0FKWTVXWFFBNkoyNFdBRlo0QVdPR0NVWFhQSVFSM05T
+  dataIngestToken: ZHQwYzAxLjY2SFhNVVBQMk9RSzNJRDJGUVJQUEZBQS5FUjVIM0dWTEJBVEVCNVRQM0FYVkNGN05RTEo0SjdUNkpTM0xQRlBPNFZPUExJSEhOSEpBQ01JUENCTklWN1Az
 kind: Secret
 metadata:
-  name: demo-sit-cluster
+  name: demo-uat-cluster
   namespace: dynatrace
   labels:
     dynatrace.com/created-by: "dynatrace.kubernetes"
@@ -13,7 +13,7 @@ type: Opaque
 apiVersion: dynatrace.com/v1beta5
 kind: DynaKube
 metadata:
-  name: demo-sit-cluster
+  name: demo-uat-cluster
   namespace: dynatrace
   labels:
     dynatrace.com/created-by: "dynatrace.kubernetes"
